@@ -8,34 +8,60 @@ class Session {
         let restoredSessions = new Array()
         let allCollections = []
         try {
-            const db = mongoClient.db('whatsapp-api')
+            const db = mongoClient.db(config.dbinstance)
             const result = await db.listCollections().toArray()
             result.forEach((collection) => {
                 allCollections.push(collection.name)
             })
 
-            allCollections.map((key) => {
-                const query = {}
-                db.collection(key)
-                    .find(query)
-                    .toArray(async (err, result) => {
-                        if (err) throw err
-                        const webhook = !config.webhookEnabled
-                            ? undefined
-                            : config.webhookEnabled
-                        const webhookUrl = !config.webhookUrl
-                            ? undefined
-                            : config.webhookUrl
-                        const instance = new WhatsAppInstance(
-                            key,
-                            webhook,
-                            webhookUrl
-                        )
-                        await instance.init()
-                        WhatsAppInstances[key] = instance
-                    })
+            // 
+            for (const key of allCollections) {
+                const query = {};
+                try {
+                    await db.collection(key).find(query).toArray();
+                    const webhook = !config.webhookEnabled
+                        ? undefined
+                        : config.webhookEnabled
+                    const webhookUrl = !config.webhookUrl
+                        ? undefined
+                        : config.webhookUrl
+                    const instance = new WhatsAppInstance(
+                        key,
+                        webhook,
+                        webhookUrl
+                    )
+                    await instance.init()
+                    WhatsAppInstances[key] = instance
+
+                } catch (e) {
+                    console.log('Error restoring sessions', e)
+                }
                 restoredSessions.push(key)
-            })
+            }
+            // 
+
+            // allCollections.map((key) => {
+            //     const query = {}
+            //     db.collection(key)
+            //         .find(query)
+            //         .toArray(async (err, result) => {
+            //             if (err) throw err
+            //             const webhook = !config.webhookEnabled
+            //                 ? undefined
+            //                 : config.webhookEnabled
+            //             const webhookUrl = !config.webhookUrl
+            //                 ? undefined
+            //                 : config.webhookUrl
+            //             const instance = new WhatsAppInstance(
+            //                 key,
+            //                 webhook,
+            //                 webhookUrl
+            //             )
+            //             await instance.init()
+            //             WhatsAppInstances[key] = instance
+            //         })
+            //     restoredSessions.push(key)
+            // })
         } catch (e) {
             logger.error('Error restoring sessions')
             logger.error(e)

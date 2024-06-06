@@ -1,0 +1,46 @@
+@key=1
+@url=http://localhost:3333
+
+@token=PUicGUHjMk8w+5wTZvxOyOB2QHuxQBSIU5MtPR3QVSzIX956PJncbHvS0FFFTryeHldaw9vhXKgclYGIn2KLDA==
+
+GET {{url}}/instance/init?key={{key}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{url}}/instance/qr?key={{key}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+###
+GET {{url}}/instance/qrbase64?key={{key}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+
+###
+GET {{url}}/instance/restore
+
+###
+GET {{url}}/instance/info?key={{key}}
+
+###
+POST {{url}}/message/text?key={{key}}
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "id": "628121998093",
+  "message": "test dong"
+}
+
+###
+POST {{url}}/message/image?key={{key}}
+Content-Type: application/x-www-form-urlencoded
+
+{
+  "id": "628121998093",
+  "file": "x.png",
+  "caption": "test gambar"
+}
+

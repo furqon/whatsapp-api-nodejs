@@ -55,6 +55,7 @@ module.exports = {
     instance: {
         maxRetryQr: INSTANCE_MAX_RETRY_QR,
     },
+    dbinstance: process.env.DB_WA,
     mongoose: {
         enabled: MONGODB_ENABLED,
         url: MONGODB_URL,
